@@ -1,8 +1,9 @@
 import { openrouter } from '$lib/openrouter/client';
 import { generateObject } from 'ai';
 import { z } from 'zod';
+import { MerchantDetailsSchema } from '../models/MerchantDetails';
+import { LineItemSchema } from '../models/LineItem';
 import type { IReceiptParser, ProcessedReceipt } from './IReceiptParser';
-import { LineItemSchema, MerchantDetailsSchema } from '../models';
 
 const ReceiptSchema = z.object({
   merchant: MerchantDetailsSchema,

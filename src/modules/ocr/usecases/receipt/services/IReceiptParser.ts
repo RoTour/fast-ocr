@@ -1,4 +1,5 @@
-import type { MerchantDetails, LineItem } from '../models';
+import type { MerchantDetails } from '../models/MerchantDetails';
+import type { LineItem } from '../models/LineItem';
 
 export interface IReceiptParser {
   parse(text: string): Promise<ProcessedReceipt>;
