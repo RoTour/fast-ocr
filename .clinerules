@@ -1,0 +1,15 @@
+Before doing, answering, thinking, or anything else, always read the 
+docs in ./docs/*
+- ArchitectureAndFlowOfData.md : How the app should be structured
+- BuildingUseCases.md : Specific way to how we build UseCases
+- ComponentsSpecifications.md : Details about our way to build components
+- TestingStrategy.md : How you should test the code you produce
+
+You MUST ALWAYS follow these instructions.
+
+Before making changes, always define a small iteration that you can make in one go.
+
+When you're done, ask for a review.
+
+This project follows **Test-Driven Development (TDD)** principles. When implementing any feature, tests **MUST be written BEFORE** the actual implementation code.
+See TestingStrategy.md for more details.

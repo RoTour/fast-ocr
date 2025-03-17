@@ -1,0 +1,1 @@
+export type GenerateFileName = (content: string) => Promise<string>

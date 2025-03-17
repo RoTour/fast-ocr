@@ -1,0 +1,1 @@
+export type UploadFile = (file: File, extension: string) => Promise<string>
