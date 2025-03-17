@@ -1,10 +1,10 @@
 import { supabaseServer } from '$lib/supabase/supabaseServer';
 import { SupabaseFileUploadRepository } from '@modules/ocr/repositories/SupabaseFileUploadRepository';
-import { MdToMdGenerator } from '@modules/ocr/services/MdToMdGenerator';
-import { MdToPDFGenerator } from '@modules/ocr/services/MdToPDFGenerator';
 import { MistralOCRService } from '@modules/ocr/services/MistralOCRService';
-import { OpenrouterFileNameGenerator } from '@modules/ocr/services/OpenrouterFileNameGenerator';
 import { GeneratePDFFromImage } from '@modules/ocr/usecases/documents/GeneratePDFFromImage';
+import { MdToMdGenerator } from '@modules/ocr/usecases/documents/services/MdToMdGenerator';
+import { MdToPDFGenerator } from '@modules/ocr/usecases/documents/services/MdToPDFGenerator';
+import { OpenrouterFileNameGenerator } from '@modules/ocr/usecases/documents/services/OpenrouterFileNameGenerator';
 import { json, type RequestHandler } from '@sveltejs/kit';
 
 export const POST: RequestHandler = async ({ request }) => {

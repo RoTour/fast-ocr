@@ -1,7 +1,7 @@
 import * as IFileUploadRepository from '../../repositories/IFileUploadRepository';
-import * as IFileGenerator from '../../services/IFileGenerator';
-import * as IFileNameGenerator from '../../services/IFileNameGenerator';
 import * as IOCRService from '../../services/IOCRService';
+import * as IFileGenerator from './services/IFileGenerator';
+import * as IFileNameGenerator from './services/IFileNameGenerator';
 
 type Deps = {
 	uploadFile: IFileUploadRepository.UploadFile;

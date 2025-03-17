@@ -1,6 +1,6 @@
-import { describe, test, expect  } from 'vitest';
-import { MdToMdGenerator } from './MdToMdGenerator';
 import { bufferToFile } from '@modules/ocr/usecases/documents/GeneratePDFFromImage';
+import { describe, expect, test } from 'vitest';
+import { MdToMdGenerator } from './MdToMdGenerator';
 
 describe('Encoding from md to md', () => {
 	test('should handle accents', async () => {
