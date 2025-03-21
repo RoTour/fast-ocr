@@ -26,11 +26,11 @@ export const ReceiptProcessingUseCase: UseCase<Input,Output> = ({
       const imageUrl = await uploadFile(file, extension);
       console.debug("ReceiptProcessingUseCase.imageUrl", imageUrl)
       const textLines = await readDataFromImage(imageUrl);
-      console.debug("ReceiptProcessingUseCase.textLines", textLines)
       const text = textLines.join('\n');
       console.debug("ReceiptProcessingUseCase.text", text)
       const result = await parseReceipt(text);
-      return UseCaseResponseBuilder.success(200, await result);
+      console.debug("ReceiptProcessingUseCase.result", result)
+      return UseCaseResponseBuilder.success(200, result);
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Failed to process receipt';
       const status = message.includes('Missing merchant name') ? 422 : 500;

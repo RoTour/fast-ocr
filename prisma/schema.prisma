@@ -1,0 +1,69 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  binaryTargets = ["native", "linux-musl-openssl-3.0.x"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id String @id @default(uuid())
+  email String @unique
+  name String
+  receipts Receipt[]
+}
+
+
+model Merchant {
+  id String @id @default(uuid())
+  name String
+
+  // Relations
+  addressId String? @unique
+  address Address? @relation(fields: [addressId], references: [id])
+  receipts Receipt[]
+}
+
+model Address {
+  id String @id @default(uuid())
+  street String
+  city String
+  country String
+
+  // Relations
+  merchant Merchant?
+}
+
+model LineItem {
+  id String @id @default(uuid())
+  description String
+  quantity Int
+  unitPrice Float
+  currency String
+
+  // Relations
+  receiptId String
+  receipt Receipt @relation(fields: [receiptId], references: [id])
+}
+
+model Receipt {
+  id String @id @default(uuid())
+  transactionDate DateTime
+
+  // Relations
+  ownerId String
+  owner User @relation(fields: [ownerId], references: [id])
+
+  merchantId String
+  merchant Merchant @relation(fields: [merchantId], references: [id])
+  
+  lineItems LineItem[]
+}

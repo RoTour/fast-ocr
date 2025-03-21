@@ -1,6 +1,6 @@
 import { supabaseServer } from '$lib/supabase/supabaseServer';
 import { SupabaseFileUploadRepository } from '@modules/ocr/repositories/SupabaseFileUploadRepository';
-import { MistralOCRService } from '@modules/ocr/services/MistralOCRService';
+import { OpenrouterOCRService } from '@modules/ocr/services/OpenrouterOCRService';
 import { ReceiptProcessingUseCase } from '@modules/ocr/usecases/receipt/ReceiptProcessingUseCase';
 import { OpenrouterReceiptParser } from '@modules/ocr/usecases/receipt/services/OpenrouterReceiptParser';
 import type { Actions } from '@sveltejs/kit';
@@ -17,7 +17,7 @@ export const actions: Actions = {
 		}
 
 		const receiptProcessingUseCase = ReceiptProcessingUseCase({
-			readDataFromImage: MistralOCRService().readDataFromImage,
+			readDataFromImage: OpenrouterOCRService('google/gemini-2.0-flash-001').readDataFromImage,
 			parseReceipt: OpenrouterReceiptParser('google/gemini-2.0-flash-001').parse,
 			uploadFile: SupabaseFileUploadRepository(supabaseServer).uploadFile
 		});
@@ -25,6 +25,8 @@ export const actions: Actions = {
 		const results = await Promise.all(
 			imagesFile.map((file) => receiptProcessingUseCase.execute({ file }))
 		);
+
+		console.debug("ReceiptAction.results", results)
 
 		return {
 			results
