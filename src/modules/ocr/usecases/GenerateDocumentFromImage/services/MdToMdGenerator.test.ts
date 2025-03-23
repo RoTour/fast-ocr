@@ -1,4 +1,4 @@
-import { bufferToFile } from '@modules/ocr/usecases/documents/GeneratePDFFromImage';
+import { bufferToFile } from '@modules/ocr/usecases/GenerateDocumentFromImage/GeneratePDFFromImage';
 import { describe, expect, test } from 'vitest';
 import { MdToMdGenerator } from './MdToMdGenerator';
 

@@ -2,7 +2,7 @@ import { UseCaseResponseBuilder } from '$lib/interfaces/UseCase';
 import { bufferToFile } from '$lib/utils/file';
 import type { UploadFile } from '@modules/ocr/repositories/IFileUploadRepository';
 import * as IOCRService from '@modules/ocr/services/IOCRService';
-import type { IReceiptParser } from '@modules/ocr/usecases/receipt/services/IReceiptParser';
+import type { IReceiptParser } from '@modules/ocr/usecases/ReceiptProcessing/services/IReceiptParser';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { ReceiptProcessingUseCase } from './ReceiptProcessingUseCase';
 

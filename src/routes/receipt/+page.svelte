@@ -2,17 +2,22 @@
 	import { enhance } from '$app/forms';
 	import { page } from '$app/state';
 	import type { UseCaseResponse } from '$lib/interfaces/UseCase';
-	import type { ProcessedReceipt } from '@modules/ocr/usecases/receipt/services/IReceiptParser';
+	import type { ProcessedReceipt } from '@modules/ocr/usecases/ReceiptProcessing/dto/ProcessedReceipt';
 	import FileUploadInput from '@modules/ocr/views/FileUploadInput.svelte';
 
 	let files: File[] = $state([]);
 	let fileNames = $derived(files.map((it) => it.name));
+	let isLoading = $state(false);
 	let results: UseCaseResponse<ProcessedReceipt>[] = $derived.by(() => {
-		const successUseCases = page.form?.results?.filter((it: UseCaseResponse<ProcessedReceipt>) => it.isSuccess);
+		const successUseCases = page.form?.results?.filter(
+			(it: UseCaseResponse<ProcessedReceipt>) => it.isSuccess
+		);
 		return successUseCases || [];
-	})
+	});
 	let errorMessage = $derived.by(() => {
-		const failedUseCases = page.form?.results?.filter((it: UseCaseResponse<ProcessedReceipt>) => !it.isSuccess);
+		const failedUseCases = page.form?.results?.filter(
+			(it: UseCaseResponse<ProcessedReceipt>) => !it.isSuccess
+		);
 		return failedUseCases?.[0]?.message;
 	});
 </script>
@@ -20,10 +25,13 @@
 <form class="p-8" method="post" action="?/receipt" use:enhance enctype="multipart/form-data">
 	<FileUploadInput bind:files allowMultiple />
 
-	<button type="submit" class="cursor-pointer rounded bg-teal-500 px-4 py-2 text-white"
+	<button type="submit" class="cursor-pointer rounded bg-teal-500 px-4 py-2 text-white" onclick={() => isLoading = true}
 		>Submit</button
 	>
 </form>
+{#if isLoading}
+		<div class="mb-2">Loading...</div>
+{/if}
 
 {#if fileNames.length > 0}
 	<div class="mt-4">

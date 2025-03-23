@@ -1,7 +1,8 @@
 import { UseCaseResponseBuilder, type InputFactory, type OutputFactory, type UseCase } from '$lib/interfaces/UseCase';
 import type * as IFileUploadRepository from '@modules/ocr/repositories/IFileUploadRepository';
 import type * as IOCRService from '@modules/ocr/services/IOCRService';
-import type { IReceiptParser, ProcessedReceipt } from '@modules/ocr/usecases/receipt/services/IReceiptParser';
+import type { IReceiptParser } from '@modules/ocr/usecases/ReceiptProcessing/services/IReceiptParser';
+import type { ProcessedReceipt } from './dto/ProcessedReceipt';
 
 type Input = InputFactory<
   { file: File },
@@ -12,7 +13,8 @@ type Input = InputFactory<
   }
 >;
 
-type Output = OutputFactory<ProcessedReceipt>;
+type Output = OutputFactory<ProcessedReceipt & { fileUrl: string }>;
+export type ReceiptProcessingUseCaseOutput = Output;
 
 export const ReceiptProcessingUseCase: UseCase<Input,Output> = ({ 
   uploadFile,
@@ -22,15 +24,11 @@ export const ReceiptProcessingUseCase: UseCase<Input,Output> = ({
   execute: async ({ file }) => {
     try {
       const extension = file.type.split('/')[1];
-      console.debug("ReceiptProcessingUseCase.extension", extension)
       const imageUrl = await uploadFile(file, extension);
-      console.debug("ReceiptProcessingUseCase.imageUrl", imageUrl)
       const textLines = await readDataFromImage(imageUrl);
       const text = textLines.join('\n');
-      console.debug("ReceiptProcessingUseCase.text", text)
       const result = await parseReceipt(text);
-      console.debug("ReceiptProcessingUseCase.result", result)
-      return UseCaseResponseBuilder.success(200, result);
+      return UseCaseResponseBuilder.success(200, { ...result, fileUrl: imageUrl });
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Failed to process receipt';
       const status = message.includes('Missing merchant name') ? 422 : 500;
