@@ -5,6 +5,8 @@
 	};
 	let { allowMultiple = false, files = $bindable() }: Props = $props();
 
+	$inspect('INSPECT - FileUploadInput.files', files);
+
 	let isLoading = $state(false);
 
 	const handleFileUpload = async (event: Event) => {
@@ -27,7 +29,7 @@
 	id="file-upload"
 	type="file"
 	accept="image/*"
-  name="images"
+  name="images[]"
   multiple={allowMultiple}
 	onchange={handleFileUpload}
 	disabled={isLoading}

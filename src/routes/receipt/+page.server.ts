@@ -1,4 +1,6 @@
+import { env } from '$env/dynamic/private';
 import { AppError } from '$lib/errors/AppError';
+import { EnvNotSetError } from '$lib/errors/common/EnvNotSetError';
 import { prisma } from '$lib/prisma/client';
 import { supabaseServer } from '$lib/supabase/supabaseServer';
 import { SupabaseFileUploadRepository } from '@modules/ocr/repositories/SupabaseFileUploadRepository';
@@ -11,20 +13,21 @@ import { OpenrouterReceiptParser } from '@modules/ocr/usecases/ReceiptProcessing
 import { InMemoryStoreReceiptRepository } from '@modules/ocr/usecases/StoreReceipt/repositories/InMemoryStoreReceiptRepository';
 import { PrismaStoreReceiptRepository } from '@modules/ocr/usecases/StoreReceipt/repositories/PrismaStoreReceiptRepository';
 import { StoreReceiptUseCase } from '@modules/ocr/usecases/StoreReceipt/StoreReceipt';
-import { fail, type Actions } from '@sveltejs/kit';
-import { env } from '$env/dynamic/private';
-import { EnvNotSetError } from '$lib/errors/common/EnvNotSetError';
+import { fail, type ActionFailure, type Actions } from '@sveltejs/kit';
+
+type FailedAction = { message: string };
+type SuccessAction = { results: ReceiptProcessingUseCaseOutput[] };
 
 export const actions: Actions = {
-	receipt: async ({ request }) => {
+	receipt: async ({ request }): Promise<ActionFailure<FailedAction> | SuccessAction> => {
 		const formData = await request.formData();
-		const imagesFile = [formData.get('images')].flat() as File[];
-
-		console.debug('ReceiptAction.imagesFile', imagesFile);
-
-		if (!imagesFile) {
+		const imagesFiles = [formData.getAll('images[]')].flat() as File[];
+		
+		console.debug('ReceiptAction.imagesFiles', imagesFiles);
+		if (!imagesFiles || imagesFiles.filter(Boolean).length === 0) {
 			return fail(400, { message: 'No image uploaded' });
 		}
+
 
 		const receiptProcessingUseCase = ReceiptProcessingUseCase({
 			readDataFromImage: OpenrouterOCRService('google/gemini-2.0-flash-001').readDataFromImage,
@@ -33,8 +36,10 @@ export const actions: Actions = {
 		});
 
 		const results = await Promise.all(
-			imagesFile.map((file) => receiptProcessingUseCase.execute({ file }))
+			imagesFiles.map((file) => receiptProcessingUseCase.execute({ file }))
 		);
+
+		console.debug('ReceiptAction.results', results);
 
 		try {
 			await storeSuccesses(results);
@@ -43,7 +48,6 @@ export const actions: Actions = {
 			return fail(500, { message: 'Failed to store receipt for unknown reason' });
 		}
 
-		console.debug('ReceiptAction.results', results);
 
 		return {
 			results
