@@ -1,7 +1,9 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
+	import { page } from '$app/state';
 	import FileUploadInput from '@modules/ocr/views/FileUploadInput.svelte';
 	import { ReceiptVM } from '@modules/ocr/views/pages/ReceiptVM.svelte';
+	import ReceiptHistory from '../components/ReceiptHistory.svelte';
 
 	let vm = new ReceiptVM();
 </script>
@@ -60,3 +62,6 @@
 		{/if}
 	{/each}
 {/if}
+
+<ReceiptHistory ownReceipts={page.data.ownReceipts} />
+

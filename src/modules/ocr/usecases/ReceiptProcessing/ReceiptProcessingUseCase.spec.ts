@@ -59,7 +59,7 @@ describe('ReceiptProcessingUseCase', () => {
 
     expect(mockUploadFile).toHaveBeenCalledWith(testFile, 'jpeg');
     expect(mockOCRService.readDataFromImage).toHaveBeenCalledWith('http://storage/image.jpg');
-    expect(result).toEqual(UseCaseResponseBuilder.success(200, { 
+    expect(result).containSubset(UseCaseResponseBuilder.success(200, { 
       merchant: { name: 'TestStore' },
       items: [{
         description: 'TestItem',

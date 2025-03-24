@@ -13,7 +13,24 @@ import { OpenrouterReceiptParser } from '@modules/ocr/usecases/ReceiptProcessing
 import { InMemoryStoreReceiptRepository } from '@modules/ocr/usecases/StoreReceipt/repositories/InMemoryStoreReceiptRepository';
 import { PrismaStoreReceiptRepository } from '@modules/ocr/usecases/StoreReceipt/repositories/PrismaStoreReceiptRepository';
 import { StoreReceiptUseCase } from '@modules/ocr/usecases/StoreReceipt/StoreReceipt';
-import { fail, type ActionFailure, type Actions } from '@sveltejs/kit';
+import { error, fail, type ActionFailure, type Actions } from '@sveltejs/kit';
+import type { PageServerLoad } from './$types';
+import { ListOwnReceiptsUseCase } from '@modules/ocr/usecases/ListOwnReceipts/ListOwnReceiptsUseCase';
+import { PrismaListOwnReceiptsRepository } from '@modules/ocr/usecases/ListOwnReceipts/repositories/PrismaListOwnReceiptsRepository';
+
+export const load: PageServerLoad = async () => {
+	const ownReceipts = await ListOwnReceiptsUseCase({
+		getUserReceipts: PrismaListOwnReceiptsRepository(prisma).GetUserReceipts
+	}).execute({ userId: env.DEFAULT_USER_ID });
+
+	if (!ownReceipts.isSuccess) {
+		return error(500, { message: ownReceipts.message });
+	}
+
+	return {
+		ownReceipts: ownReceipts.data
+	};
+};
 
 type FailedAction = { message: string };
 type SuccessAction = { results: ReceiptProcessingUseCaseOutput[] };
@@ -22,12 +39,11 @@ export const actions: Actions = {
 	receipt: async ({ request }): Promise<ActionFailure<FailedAction> | SuccessAction> => {
 		const formData = await request.formData();
 		const imagesFiles = [formData.getAll('images[]')].flat() as File[];
-		
+
 		console.debug('ReceiptAction.imagesFiles', imagesFiles);
 		if (!imagesFiles || imagesFiles.filter(Boolean).length === 0) {
 			return fail(400, { message: 'No image uploaded' });
 		}
-
 
 		const receiptProcessingUseCase = ReceiptProcessingUseCase({
 			readDataFromImage: OpenrouterOCRService('google/gemini-2.0-flash-001').readDataFromImage,
@@ -47,7 +63,6 @@ export const actions: Actions = {
 			if (e instanceof AppError) return fail(500, { message: e.message });
 			return fail(500, { message: 'Failed to store receipt for unknown reason' });
 		}
-
 
 		return {
 			results
