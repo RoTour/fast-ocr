@@ -4,8 +4,14 @@
 	import FileUploadInput from '@modules/ocr/views/FileUploadInput.svelte';
 	import { ReceiptVM } from '@modules/ocr/views/pages/ReceiptVM.svelte';
 	import ReceiptHistory from '../components/ReceiptHistory.svelte';
+	import ReceiptTotal from '../components/ReceiptTotal.svelte';
+	import TabBar from '$lib/components/TabBar.svelte';
+	import ReceiptAverage from '../components/ReceiptAverage.svelte';
+	import ReceiptTotalTrips from '../components/ReceiptTotalTrips.svelte';
 
 	let vm = new ReceiptVM();
+
+	$inspect("INSPECT - Receipt.svelte", vm.tabDisplayed)
 </script>
 
 <form
@@ -65,3 +71,24 @@
 
 <ReceiptHistory ownReceipts={page.data.ownReceipts} />
 
+<div class="px-8 py-4 space-y-8">
+	<h1 class="text-2xl font-bold">Grocery Tracker</h1>
+	<TabBar tabs={['Overview', 'History', 'Shopping List']} onTabChange={vm.onTabChange} />
+	{#if vm.tabDisplayed === 'Overview'}
+	<div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+		<ReceiptTotal ownReceipts={page.data.ownReceipts} />
+		<ReceiptAverage ownReceipts={page.data.ownReceipts} />
+		<ReceiptTotalTrips ownReceipts={page.data.ownReceipts} />
+	</div>
+	{/if}
+	{#if vm.tabDisplayed === 'History'}
+		<h1>history</h1>
+	{/if}
+	{#if vm.tabDisplayed === 'Shopping List'}
+		<h1>shopping list</h1>
+	{/if}
+</div>
+
+<button onclick={() => vm.onTabChange('History')}>
+	Change tab
+</button>
