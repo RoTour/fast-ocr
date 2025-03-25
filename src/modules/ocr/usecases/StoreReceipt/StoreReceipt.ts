@@ -24,7 +24,7 @@ type Output = OutputFactory<{
 export const StoreReceiptUseCase: UseCase<Input, Output> = ({ storeReceipt, getMerchantId }) => ({
 	execute: async ({ createdReceipt }) => {
 		const merchantId = await getMerchantId(createdReceipt.merchantName);
-		const transactionDate = new Date().toISOString();
+		const transactionDate = createdReceipt.transactionDate?.toISOString() ?? new Date().toISOString();
 		const file = createdReceipt.fileUrl;
 
 		await storeReceipt({

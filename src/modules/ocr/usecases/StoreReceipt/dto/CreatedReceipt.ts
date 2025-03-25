@@ -7,6 +7,7 @@ export const CreatedReceiptSchema = z.object({
 	owner: z.object({
 		identifier: z.string()
 	}),
+	transactionDate: z.date().optional(),
 	fileUrl: z.string(),
 })
 

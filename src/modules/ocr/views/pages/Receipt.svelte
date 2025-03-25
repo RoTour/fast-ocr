@@ -88,7 +88,3 @@
 		<h1>shopping list</h1>
 	{/if}
 </div>
-
-<button onclick={() => vm.onTabChange('History')}>
-	Change tab
-</button>

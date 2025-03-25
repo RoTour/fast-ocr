@@ -5,6 +5,7 @@ import * as IOCRService from '@modules/ocr/services/IOCRService';
 import type { IReceiptParser } from '@modules/ocr/usecases/ReceiptProcessing/services/IReceiptParser';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { ReceiptProcessingUseCase } from './ReceiptProcessingUseCase';
+import { DateTime } from 'luxon';
 
 describe('ReceiptProcessingUseCase', () => {
   const mockOCRService = {
@@ -112,4 +113,40 @@ describe('ReceiptProcessingUseCase', () => {
     const result = await useCase.execute({ file: testFile });
     expect(result).toEqual(UseCaseResponseBuilder.error(422, 'Missing merchant name'));
   });
+
+  it('When parsed date on receipt is after current date, should detect that date is wrong', async () => {
+    const currentDate = DateTime.fromObject({ year: 2000, month: 1, day: 1, hour: 0 })
+    vi.setSystemTime(currentDate.toJSDate());
+    mockReceiptParser.parse.mockResolvedValue({
+      merchant: { name: 'TestStore' },
+      items: [{
+        description: 'TestItem',
+        quantity: 1,
+        unitPrice: 10,
+        total: 10,
+        currency: 'USD'
+      }],
+      transactionDate: currentDate.plus({ days: 1 }).toJSDate()
+    });
+    const useCase = ReceiptProcessingUseCase({ 
+      uploadFile: mockUploadFile,
+      readDataFromImage: mockOCRService.readDataFromImage,
+      parseReceipt: mockReceiptParser.parse
+    });
+
+    const result = await useCase.execute({ file: testFile });
+    expect(result).toEqual(UseCaseResponseBuilder.success(200, { 
+      merchant: { name: 'TestStore' },
+      items: [{
+        description: 'TestItem',
+        quantity: 1,
+        unitPrice: 10,
+        total: 10,
+        currency: 'USD'
+      }],
+      transactionDate: currentDate.plus({ days: 1 }).toJSDate(),
+      fileUrl: 'http://storage/image.jpg',
+      dateMightBeWrong: true
+    }));
+  })
 });
