@@ -17,7 +17,7 @@
 			{@render icon()}
 		</div>
 	{/if}
-	<h3 class="text-md font-bold">{title}</h3>
+	<h3 class="text-md font-semibold tracking-wide">{title}</h3>
 	<p class="mt-2 text-2xl font-black">{stats}</p>
 	<p class="font-regular text-sm tracking-wide opacity-50">{subTitle}</p>
 </div>

@@ -1,8 +1,8 @@
 <script lang="ts">
-	import type { OwnReceiptList } from '@modules/ocr/usecases/ListOwnReceipts/models/OwnReceiptList';
-	import { ReceiptTotalVM } from './ReceiptTotalVM.svelte';
 	import CardStats from '$lib/components/CardStats.svelte';
-  import { DollarSign } from 'lucide-svelte';
+	import type { OwnReceiptList } from '@modules/ocr/usecases/ListOwnReceipts/models/OwnReceiptList';
+	import { DollarSign } from 'lucide-svelte';
+	import { ReceiptTotalVM } from './ReceiptTotalVM.svelte';
 
 	type Props = {
 		ownReceipts: OwnReceiptList;
@@ -18,7 +18,7 @@
 {/snippet}
 
 <CardStats 
-  title="Total spent"
-  stats={`${vm.total}€`}
-  subTitle="Total amount spent"
+  title="Total spent this month"
+  stats={`${vm.totalOfCurrentMonth}€`}
+  subTitle={`${vm.diffSinceLastMonth}€`}
   icon={icon} />
