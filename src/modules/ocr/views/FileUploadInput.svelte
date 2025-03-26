@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { Plus } from "lucide-svelte";
+
 	type Props = {
 		allowMultiple?: boolean;
     files: File[];
@@ -18,10 +20,12 @@
 
     files.push(...newFiles);
 	};
+
+	
 </script>
 
-<label for="file-upload" class="bg-teal-500 text-white px-4 py-2 rounded cursor-pointer">
-	Add Images
+<label for="file-upload" class="border-2 border-primary text-primary-foreground ps-2 pe-4 py-2 rounded cursor-pointer flex gap-2">
+	<Plus /> Add Images
 </label>
 
 <input
