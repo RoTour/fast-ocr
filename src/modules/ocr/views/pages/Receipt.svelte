@@ -4,14 +4,15 @@
 	import FileUploadInput from '@modules/ocr/views/FileUploadInput.svelte';
 	import { ReceiptVM } from '@modules/ocr/views/pages/ReceiptVM.svelte';
 	import ReceiptHistory from '../components/ReceiptHistory.svelte';
-	import ReceiptTotal from '../components/ReceiptTotal.svelte';
+	import ReceiptTotal from '../components/stats/ReceiptTotal.svelte';
 	import TabBar from '$lib/components/TabBar.svelte';
-	import ReceiptAverage from '../components/ReceiptAverage.svelte';
-	import ReceiptTotalTrips from '../components/ReceiptTotalTrips.svelte';
+	import ReceiptAverage from '../components/stats/ReceiptAverage.svelte';
+	import ReceiptTotalTrips from '../components/stats/ReceiptTotalTrips.svelte';
+	import { ScanText } from 'lucide-svelte';
 
 	let vm = new ReceiptVM();
 
-	$inspect("INSPECT - Receipt.svelte", vm.tabDisplayed)
+	$inspect('INSPECT - Receipt.svelte', vm.tabDisplayed);
 </script>
 
 <form
@@ -69,17 +70,19 @@
 	{/each}
 {/if}
 
-<ReceiptHistory ownReceipts={page.data.ownReceipts} />
-
-<div class="px-8 py-4 space-y-8">
+<div class="space-y-8 px-8 py-4">
 	<h1 class="text-2xl font-bold">Grocery Tracker</h1>
+	<a href="/receipt/scan">
+		<ScanText/>
+		Scan Receipt
+	</a>
 	<TabBar tabs={['Overview', 'History', 'Shopping List']} onTabChange={vm.onTabChange} />
 	{#if vm.tabDisplayed === 'Overview'}
-	<div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-		<ReceiptTotal ownReceipts={page.data.ownReceipts} />
-		<ReceiptAverage ownReceipts={page.data.ownReceipts} />
-		<ReceiptTotalTrips ownReceipts={page.data.ownReceipts} />
-	</div>
+		<div class="grid grid-cols-1 gap-4 md:grid-cols-3">
+			<ReceiptTotal ownReceipts={page.data.ownReceipts} />
+			<ReceiptAverage ownReceipts={page.data.ownReceipts} />
+			<ReceiptTotalTrips ownReceipts={page.data.ownReceipts} />
+		</div>
 	{/if}
 	{#if vm.tabDisplayed === 'History'}
 		<h1>history</h1>
@@ -87,4 +90,9 @@
 	{#if vm.tabDisplayed === 'Shopping List'}
 		<h1>shopping list</h1>
 	{/if}
+
+	<div class="flex">
+		<!-- TODO: Monthly Spending -->
+		<ReceiptHistory ownReceipts={page.data.ownReceipts} />
+	</div>
 </div>
